@@ -1,0 +1,83 @@
+clear all 
+close all 
+clc
+
+%  *******Filtrage Analogique*******  %
+
+%te = 0.0005 ;
+
+%%
+
+%Definition des variables et de signal 
+te = 1e-4 ;
+fe = 1/te ;
+t = 0:te:5-te ;
+N = length(t);
+f = (0:N-1)*(fe/N);
+fshift = (-N/2:(N/2)-1)*fe/N;
+
+
+%%
+%Definition de la fonction xt 
+xt = sin(2*pi*500*t)+ sin(2*pi*400*t)+ sin(2*pi* 50*t) ;
+ tansf = fft(xt);
+%plot(fshift, fftshift(abs(tansf)))
+
+%%
+% la fonction de transmmitance 
+K = 1 ;
+wc1 = 50 ;
+wc2 = 1700 ;
+wc3 = 150 ;
+w = 2*pi*f ; 
+
+H1 = (K*1j*w/wc1)./(1+1j*w/wc1) ;
+
+H2 = (K*1j*w/wc2)./(1+1j*w/wc2) ;
+H3 = (K*1j*w/wc3)./(1+1j*w/wc3) ;
+ 
+   %plot(f,abs(H1))
+
+G1 = 20*log(abs(H1));
+G2 = 20*log(abs(H2));
+G3 = 20*log(abs(H3));
+
+phi1 = angle(H1);
+phi2 = angle(H2);
+phi3 = angle(H3);
+hold on
+
+
+% subplot(2,1,1) 
+% semilogx(f,G1,'g',f,G2,'r',f,G3,'b')
+% ylabel('Gain (dB)')
+% title('Bode Diagram')
+% grid on 
+% subplot(2,1,2) 
+% semilogx(f,phi1, 'g',f,phi2,'r',f,phi3,'b')
+% ylabel('Phase (deg)')
+% xlabel('Frequency (rad/s)')
+% grid on 
+
+%%
+filtre = (H2(1:floor(N/2))),flip(H2(1:floor(N/2)));
+yt2 = fftshift(tansf).*filtre;
+plot(fshift,abs(yt2));
+%%
+%exercice 2 
+% Charger le signal sonore
+[x,fs] = audioread('test.wav');
+
+% Définir les paramètres du filtre
+fc = 3000; % fréquence de coupure (Hz)
+n = 4; % ordre du filtre
+
+% Créer le filtre
+[b,a] = butter(n,fc/(fs/2),'low');
+
+% Appliquer le filtre au signal
+y = filter(b,a,x);
+
+% Enregistrer le signal filtré
+audiowrite('test.wav',y,fs);
+
