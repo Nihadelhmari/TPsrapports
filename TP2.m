@@ -1,0 +1,84 @@
+clear all;
+close all;
+clc;
+%**************Jeux de motsSynthèse et analyse spectrale d*une gamme de musique***************%
+
+fichier ='audio.wav';      %charger le fichier
+[x,fs] = audioread(fichier); %lire le fichier 
+Te = 1/fs;
+t = 0:Te:(length(x)-1)*Te;
+
+plot(t,x) ; %plot avec le temps
+
+%question3
+
+%sound(x,2*fs);compresion de son
+% sound(x,fs/2);delatation de son
+
+%question4:
+
+%plot(x);                   %tracer le signal en foction des indices du vecteur
+
+%question 5
+Riennesertde =x(1:82000);  %indice correspond au rien ne sert de
+sound(Riennesertde,22000); % pour ecouter juste rien ne sert de
+ 
+%question 6
+ courir=x(82000:103300);    %indice correspond au courir
+sound(courir,22000);     % pour ecouter courir
+
+ ilfaut=x(103300:128900);   %indice correspond au il faut
+sound(ilfaut,22000);     % pour ecouter il faut
+
+partirapoint=x(128900:171008);   %indice correspond au partir a point
+sound(partirapoint,22000);   % pour ecouter partir a
+
+% %quest7 ecouter la phrase:Rien ne sert de partir apoint il faut courir on
+% genere le vecteur suivant puis on 'ecoute
+  y=[Riennesertde courir ilfaut partirapoint ];
+   sound(y ,fs);
+
+ %%
+ % exercice 2
+ fe=8192;%freuence d'd’échantillonnage 
+Te=1/fe;
+t=0:Te:1;
+%%
+%decalarer les frequences de chaque note de la gamme 
+DO1=262;
+RE=294;
+ME=330;
+Fa=349;
+SOL =392;
+la=440;
+Si=494;
+DO2=523;
+%%
+%generer un signal pour chaque note de gamme 
+x=sin(2*pi*DO1*t);
+x1=sin(2*pi*RE*t);
+x2=sin(2*pi*ME*t);
+x3=sin(2*pi*Fa*t);
+x4=sin(2*pi*SOL*t);
+x5=sin(2*pi*la*t);
+x6=sin(2*pi*Si*t);
+x7=sin(2*pi*DO2*t);
+%%
+%combiner les notes pour obtenir la gamme musicale 
+ y=[x x1 x2 x3 x4 x5 x6 x7];
+ sound(y ,fe);%ecouter la gamme 
+%%
+%question 4 tracer la gamme en echelle lineaire 
+ N=length(y);
+ f=(0:N-1)*(fe/N);
+ A=fft(y);
+plot(f,abs(A));
+ figure(2)
+ %%
+ %tracer la gamme en echelle decibel
+N=length(y);
+fshift = (-N/2:N/2-1)*(fe/N);
+DSP=abs(fft(y)).^2/N;
+% DSPr=DSP(1:N/2);
+plot(fshift,fftshift(mag2db(DSP)))
+
